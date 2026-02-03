@@ -5,7 +5,7 @@ from app.core.config import settings
 # check_same_thread=False is needed only for SQLite
 connect_args = {"check_same_thread": False} if "sqlite" in settings.DATABASE_URL else {}
 
-engine = create_engine(settings.DATABASE_URL, echo=True, connect_args=connect_args)
+engine = create_engine(settings.SQLALCHEMY_DATABASE_URI, echo=True, connect_args=connect_args)
 
 def create_db_and_tables():
     from app import models # noqa: F401

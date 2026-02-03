@@ -7,8 +7,17 @@ class Settings(BaseSettings):
     BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
     
     # Database
-    DATABASE_URL: str = "sqlite:///./sql_app.db"
+    # Cloud Run has a read-only filesystem except for /tmp
+    DATABASE_URL: str = "sqlite:///./dev.db"
     
+    @property
+    def SQLALCHEMY_DATABASE_URI(self) -> str:
+        import os
+        # If running in Cloud Run, use /tmp for SQLite
+        if os.getenv("K_SERVICE") and self.DATABASE_URL.startswith("sqlite:///./"):
+             return self.DATABASE_URL.replace("sqlite:///./", "sqlite:////tmp/")
+        return self.DATABASE_URL
+
     # Firebase
     FIREBASE_CREDENTIALS_PATH: Optional[str] = None
     
